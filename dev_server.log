@@ -1,0 +1,87 @@
+
+> ai-roleplay@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.12 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+- Environments: .env.local
+✓ Ready in 541ms
+
+○ Compiling / ...
+ GET / 200 in 4.5s (next.js: 4.0s, application-code: 450ms)
+Error in chat route: Error [AI_APICallError]: Incorrect API key provided: dummy. You can find your API key at https://platform.openai.com/account/api-keys.
+    at async POST (src/app/api/chat/route.ts:20:20)
+  18 |       : "You are a helpful AI assistant.";
+  19 |
+> 20 |     const result = await streamText({
+     |                    ^
+  21 |       model: openai('gpt-4o'),
+  22 |       system: systemPrompt,
+  23 |       messages, {
+  cause: undefined,
+  url: 'https://api.openai.com/v1/chat/completions',
+  requestBodyValues: {
+    model: 'gpt-4o',
+    logit_bias: undefined,
+    logprobs: undefined,
+    top_logprobs: undefined,
+    user: undefined,
+    parallel_tool_calls: undefined,
+    max_tokens: undefined,
+    temperature: 0,
+    top_p: undefined,
+    frequency_penalty: undefined,
+    presence_penalty: undefined,
+    stop: undefined,
+    seed: undefined,
+    max_completion_tokens: undefined,
+    store: undefined,
+    metadata: undefined,
+    prediction: undefined,
+    response_format: undefined,
+    messages: [ [Object], [Object], [Object] ],
+    tools: undefined,
+    tool_choice: undefined,
+    functions: undefined,
+    function_call: undefined,
+    stream: true,
+    stream_options: { include_usage: true }
+  },
+  statusCode: 401,
+  responseHeaders: {
+    'access-control-expose-headers': 'CF-Ray, CF-Ray',
+    'alt-svc': 'h3=":443"; ma=86400',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a26031c3cb565552-ORD',
+    connection: 'keep-alive',
+    'content-length': '255',
+    'content-type': 'application/json; charset=utf-8',
+    date: 'Tue, 04 Aug 2026 20:08:30 GMT',
+    server: 'cloudflare',
+    'set-cookie': '_cfuvid=cK.pSdht1IIWTIUuqjWC41dsNiqFFhP80bTN08OcRvw-1785874110.045678-1.0.1.1-8rgvDJwuNwr7MrmWfQHsfmfY5jeYK9UJDgJFY4Mv_p4; HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    vary: 'Origin',
+    'x-content-type-options': 'nosniff',
+    'x-openai-proxy-wasm': 'v0.1',
+    'x-request-id': 'req_42fa5dcc3e7e4de2ae418eb0031dd889'
+  },
+  responseBody: '{\n' +
+    '    "error": {\n' +
+    '        "message": "Incorrect API key provided: dummy. You can find your API key at https://platform.openai.com/account/api-keys.",\n' +
+    '        "type": "invalid_request_error",\n' +
+    '        "param": null,\n' +
+    '        "code": "invalid_api_key"\n' +
+    '    }\n' +
+    '}\n',
+  isRetryable: false,
+  data: {
+    error: {
+      message: 'Incorrect API key provided: dummy. You can find your API key at https://platform.openai.com/account/api-keys.',
+      type: 'invalid_request_error',
+      param: null,
+      code: 'invalid_api_key'
+    }
+  }
+}
+ POST /api/chat 500 in 1700ms (next.js: 1072ms, application-code: 629ms)
