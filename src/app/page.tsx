@@ -3,20 +3,30 @@
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { Chat } from '@/components/Chat';
-import { CreateScenarioForm } from '@/components/CreateScenarioForm';
+import { ScenarioEditor } from '@/components/ScenarioEditor';
 import { scenarios as defaultScenarios, Scenario } from '@/lib/scenarios';
 
 export default function Home() {
   const [allScenarios, setAllScenarios] = useState<Scenario[]>(defaultScenarios);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(defaultScenarios[0]);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [modelName, setModelName] = useState('meta-llama/llama-3.3-70b-instruct');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleCreateScenario = (newScenario: Scenario) => {
-    setAllScenarios([...allScenarios, newScenario]);
-    setSelectedScenario(newScenario);
-    setIsCreating(false);
+  const handleSaveScenario = (savedScenario: Scenario) => {
+    setAllScenarios(prev => {
+      const existingIndex = prev.findIndex(s => s.id === savedScenario.id);
+      if (existingIndex >= 0) {
+        // Update existing
+        const newArr = [...prev];
+        newArr[existingIndex] = savedScenario;
+        return newArr;
+      }
+      // Add new
+      return [...prev, savedScenario];
+    });
+    setSelectedScenario(savedScenario);
+    setIsEditing(false);
     setIsSidebarOpen(false);
   };
 
@@ -27,10 +37,10 @@ export default function Home() {
         selectedScenario={selectedScenario}
         onSelectScenario={(scenario) => {
           setSelectedScenario(scenario);
-          setIsCreating(false);
+          setIsEditing(false);
         }}
         onCreateNew={() => {
-          setIsCreating(true);
+          setIsEditing(true);
           setSelectedScenario(null);
           setIsSidebarOpen(false);
         }}
@@ -40,22 +50,26 @@ export default function Home() {
         setModelName={setModelName}
       />
 
-      {isCreating ? (
-        <CreateScenarioForm
-          onSave={handleCreateScenario}
+      {isEditing ? (
+        <ScenarioEditor
+          initialScenario={selectedScenario || undefined}
+          onSave={handleSaveScenario}
           onCancel={() => {
-            setIsCreating(false);
-            if (allScenarios.length > 0) setSelectedScenario(allScenarios[0]);
+            setIsEditing(false);
+            if (!selectedScenario && allScenarios.length > 0) {
+              setSelectedScenario(allScenarios[0]);
+            }
           }}
         />
       ) : selectedScenario ? (
         <Chat
           // We use key here to completely unmount and remount the Chat component
-          // when the scenario or model changes, ensuring fresh useChat state.
-          key={`${selectedScenario.id}-${modelName}`}
+          // when the scenario, scenario content, or model changes, ensuring fresh useChat state.
+          key={`${selectedScenario.id}-${selectedScenario.title}-${modelName}`}
           scenario={selectedScenario}
           modelName={modelName}
           onOpenSidebar={() => setIsSidebarOpen(true)}
+          onEditScenario={() => setIsEditing(true)}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center text-gray-500">

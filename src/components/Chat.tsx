@@ -10,14 +10,17 @@ interface ChatProps {
   scenario: Scenario;
   modelName: string;
   onOpenSidebar: () => void;
+  onEditScenario: () => void;
 }
 
-export function Chat({ scenario, modelName, onOpenSidebar }: ChatProps) {
-  // We include scenarioId and modelName in the initial request.
+export function Chat({ scenario, modelName, onOpenSidebar, onEditScenario }: ChatProps) {
+  // We include scenarioId, scenario payload, and modelName in the initial request.
 
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } = useChat({
     body: {
       scenarioId: scenario.id,
+      // We pass the full scenario config to the backend so dynamic edits don't require server-side state persistence
+      scenarioConfig: scenario,
       modelName: modelName,
     },
     // Customize the API endpoint if needed, default is /api/chat
@@ -69,6 +72,12 @@ export function Chat({ scenario, modelName, onOpenSidebar }: ChatProps) {
             <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Scenario: {scenario.tagline}</p>
           </div>
         </div>
+        <button
+          onClick={onEditScenario}
+          className="text-xs font-medium px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md transition-colors"
+        >
+          Edit Scenario
+        </button>
       </header>
 
       {/* Messages area */}
