@@ -1,21 +1,24 @@
-import { characters, Character } from '@/lib/characters';
+import { Scenario } from '@/lib/scenarios';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Plus } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 interface SidebarProps {
-  selectedCharacter: Character | null;
-  onSelectCharacter: (character: Character) => void;
+  scenarios: Scenario[];
+  selectedScenario: Scenario | null;
+  onSelectScenario: (scenario: Scenario) => void;
+  onCreateNew: () => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   modelName: string;
   setModelName: (modelName: string) => void;
 }
 
-export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpen, modelName, setModelName }: SidebarProps) {
+export function Sidebar({ scenarios, selectedScenario, onSelectScenario, onCreateNew, isOpen, setIsOpen, modelName, setModelName }: SidebarProps) {
   return (
     <>
       {/* Mobile overlay */}
@@ -33,9 +36,9 @@ export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpe
       )}>
         <div className="p-4 border-b border-gray-800">
           <h2 className="text-xl font-bold flex items-center gap-2">
-            🎭 PersonaAI
+            🌍 WorldBuilder
           </h2>
-          <p className="text-sm text-gray-400 mt-1">Choose your companion</p>
+          <p className="text-sm text-gray-400 mt-1">Choose your scenario</p>
         </div>
 
         <div className="p-4 border-b border-gray-800">
@@ -53,11 +56,23 @@ export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpe
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
-          {characters.map((char) => (
+          <button
+            onClick={onCreateNew}
+            className="w-full text-left p-3 rounded-lg transition-all duration-200 border border-dashed border-gray-700 bg-gray-900/50 hover:bg-gray-800/80 hover:border-gray-600 flex items-center justify-center gap-2 text-gray-400 hover:text-gray-200 mb-4"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="font-medium">Create Custom Scenario</span>
+          </button>
+
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
+            Available Scenarios
+          </div>
+
+          {scenarios.map((scenario) => (
             <button
-              key={char.id}
+              key={scenario.id}
               onClick={() => {
-                onSelectCharacter(char);
+                onSelectScenario(scenario);
                 // On mobile, close sidebar after selection
                 if (window.innerWidth < 768) {
                   setIsOpen(false);
@@ -65,18 +80,18 @@ export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpe
               }}
               className={cn(
                 "w-full text-left p-3 rounded-lg transition-all duration-200 border flex flex-col gap-2",
-                selectedCharacter?.id === char.id
+                selectedScenario?.id === scenario.id
                   ? "bg-gray-800 border-blue-500/50 shadow-md shadow-blue-900/20"
                   : "bg-gray-900 border-transparent hover:bg-gray-800/80 hover:border-gray-700"
               )}
             >
               <div className="flex items-center gap-3">
-                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 shadow-inner", char.themeColor)}>
-                  {char.avatar}
+                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 shadow-inner", scenario.themeColor)}>
+                  {scenario.thumbnail}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-100 line-clamp-1">{char.name}</h3>
-                  <p className="text-xs text-gray-400 line-clamp-1">{char.tagline}</p>
+                  <h3 className="font-semibold text-gray-100 line-clamp-1">{scenario.title}</h3>
+                  <p className="text-xs text-gray-400 line-clamp-1">{scenario.tagline}</p>
                 </div>
               </div>
             </button>

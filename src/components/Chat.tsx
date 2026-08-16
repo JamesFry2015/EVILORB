@@ -1,23 +1,23 @@
 'use client';
 
 import { useChat, Message } from 'ai/react';
-import { Character } from '@/lib/characters';
+import { Scenario } from '@/lib/scenarios';
 import { useEffect, useRef, useState } from 'react';
 import { Send, Menu, Bot, User } from 'lucide-react';
 import { cn } from './Sidebar';
 
 interface ChatProps {
-  character: Character;
+  scenario: Scenario;
   modelName: string;
   onOpenSidebar: () => void;
 }
 
-export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
-  // We include characterId and modelName in the initial request.
+export function Chat({ scenario, modelName, onOpenSidebar }: ChatProps) {
+  // We include scenarioId and modelName in the initial request.
 
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } = useChat({
     body: {
-      characterId: character.id,
+      scenarioId: scenario.id,
       modelName: modelName,
     },
     // Customize the API endpoint if needed, default is /api/chat
@@ -26,16 +26,16 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // When character changes, reset messages and inject greeting
+  // When scenario changes, reset messages and inject starting situation
   useEffect(() => {
     setMessages([
       {
         id: 'greeting',
         role: 'assistant',
-        content: character.greeting,
+        content: scenario.startingSituation,
       }
     ]);
-  }, [character.id, character.greeting, setMessages]);
+  }, [scenario.id, scenario.startingSituation, setMessages]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -61,12 +61,12 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg", character.themeColor)}>
-            {character.avatar}
+          <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg", scenario.themeColor)}>
+            {scenario.thumbnail}
           </div>
           <div>
-            <h1 className="font-semibold text-sm sm:text-base">{character.name}</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">{character.description}</p>
+            <h1 className="font-semibold text-sm sm:text-base">{scenario.title}</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Scenario: {scenario.tagline}</p>
           </div>
         </div>
       </header>
@@ -92,8 +92,8 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
                     <User className="w-5 h-5" />
                   </div>
                 ) : (
-                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg shadow-sm", character.themeColor)}>
-                    {character.avatar}
+                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg shadow-sm", scenario.themeColor)}>
+                    {scenario.thumbnail}
                   </div>
                 )}
               </div>
@@ -114,8 +114,8 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
           <div className="flex w-full justify-start">
              <div className="flex gap-3 max-w-[85%] sm:max-w-[75%]">
                <div className="shrink-0 mt-1">
-                 <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg shadow-sm animate-pulse", character.themeColor)}>
-                    {character.avatar}
+                 <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-lg shadow-sm animate-pulse", scenario.themeColor)}>
+                    {scenario.thumbnail}
                   </div>
                </div>
                <div className="px-5 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-tl-sm flex gap-1 items-center shadow-sm">
@@ -128,7 +128,7 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
         )}
         {error && (
           <div className="text-center text-red-500 text-sm mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-900/50">
-            Error: Failed to fetch response. Check your API key.
+            Error: {error.message || 'Failed to fetch response. Check your API key.'}
           </div>
         )}
         <div ref={messagesEndRef} className="h-4" />
@@ -153,7 +153,7 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
                   }
                 }
               }}
-              placeholder={`Chat with ${character.name}...`}
+              placeholder={`What do you do in ${scenario.title}?`}
               className="w-full bg-gray-100 dark:bg-gray-800 border-transparent focus:bg-white dark:focus:bg-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 pr-12 min-h-[52px] max-h-32 resize-none outline-none transition-all duration-200 block"
               rows={1}
             />
@@ -162,13 +162,13 @@ export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
             type="submit"
             disabled={!input.trim() || isLoading}
             className="shrink-0 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 h-[52px] w-[52px] flex items-center justify-center"
-            aria-label="Send message"
+            aria-label="Send action"
           >
             <Send className="w-5 h-5" />
           </button>
         </form>
         <div className="text-center mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Press Enter to send, Shift + Enter for new line. AI can make mistakes.
+          Press Enter to take action, Shift + Enter for new line. The GM decides the outcome.
         </div>
       </div>
     </div>
