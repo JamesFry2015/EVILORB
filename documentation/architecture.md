@@ -16,9 +16,9 @@ PersonaAI is a modern web application built using the Next.js App Router. It lev
 2.  **Client-Side Hook:** The `useChat` hook from the Vercel AI SDK captures the input, updates the local message state (optimistic UI update), and sends a POST request to the backend API route.
     *   *Note:* The application passes the active `characterId` within the request body so the backend knows which persona to assume.
 3.  **Backend API Route (`/api/chat/route.ts`):**
-    *   Receives the conversation history (`messages`) and the `characterId`.
+    *   Receives the conversation history (`messages`), `characterId`, and `modelName`.
     *   Looks up the corresponding character in the `characters.ts` definition file to retrieve their specific `systemPrompt`.
-    *   Calls the OpenAI API (via `@ai-sdk/openai`) using `streamText`, injecting the selected system prompt to enforce the persona.
+    *   Calls the OpenRouter API (via an OpenAI compatible client configured in `@ai-sdk/openai`) using `streamText`, injecting the selected system prompt to enforce the persona, and routing to the requested model.
 4.  **Streaming Response:** The AI's response is streamed back to the client chunk by chunk using `toAIStreamResponse()`.
 5.  **UI Update:** The `useChat` hook receives the stream, continuously updates the UI, and creates the typing effect for the message bubble.
 

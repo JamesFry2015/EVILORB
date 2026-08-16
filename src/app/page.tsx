@@ -7,6 +7,7 @@ import { characters } from '@/lib/characters';
 
 export default function Home() {
   const [selectedCharacter, setSelectedCharacter] = useState(characters[0]);
+  const [modelName, setModelName] = useState('meta-llama/llama-3.3-70b-instruct');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -16,12 +17,15 @@ export default function Home() {
         onSelectCharacter={setSelectedCharacter}
         isOpen={isSidebarOpen}
         setIsOpen={setIsSidebarOpen}
+        modelName={modelName}
+        setModelName={setModelName}
       />
       <Chat
         // We use key here to completely unmount and remount the Chat component
-        // when the character changes, ensuring fresh useChat state.
-        key={selectedCharacter.id}
+        // when the character or model changes, ensuring fresh useChat state.
+        key={`${selectedCharacter.id}-${modelName}`}
         character={selectedCharacter}
+        modelName={modelName}
         onOpenSidebar={() => setIsSidebarOpen(true)}
       />
     </main>

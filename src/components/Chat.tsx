@@ -8,17 +8,17 @@ import { cn } from './Sidebar';
 
 interface ChatProps {
   character: Character;
+  modelName: string;
   onOpenSidebar: () => void;
 }
 
-export function Chat({ character, onOpenSidebar }: ChatProps) {
-  // We include characterId in the initial request so the backend knows who we are talking to.
-  // When character changes, we want to clear the chat. We can do this by using a key on the component
-  // or by resetting the chat state.
+export function Chat({ character, modelName, onOpenSidebar }: ChatProps) {
+  // We include characterId and modelName in the initial request.
 
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } = useChat({
     body: {
-      characterId: character.id
+      characterId: character.id,
+      modelName: modelName,
     },
     // Customize the API endpoint if needed, default is /api/chat
     api: '/api/chat',

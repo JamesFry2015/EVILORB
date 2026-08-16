@@ -11,9 +11,11 @@ interface SidebarProps {
   onSelectCharacter: (character: Character) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  modelName: string;
+  setModelName: (modelName: string) => void;
 }
 
-export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpen }: SidebarProps) {
+export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpen, modelName, setModelName }: SidebarProps) {
   return (
     <>
       {/* Mobile overlay */}
@@ -34,6 +36,20 @@ export function Sidebar({ selectedCharacter, onSelectCharacter, isOpen, setIsOpe
             🎭 PersonaAI
           </h2>
           <p className="text-sm text-gray-400 mt-1">Choose your companion</p>
+        </div>
+
+        <div className="p-4 border-b border-gray-800">
+          <label htmlFor="model-input" className="block text-xs font-medium text-gray-400 mb-1">
+            OpenRouter Model
+          </label>
+          <input
+            id="model-input"
+            type="text"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
+            placeholder="meta-llama/llama-3.3-70b-instruct"
+            className="w-full bg-gray-950 border border-gray-800 text-sm text-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-2">

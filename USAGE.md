@@ -9,7 +9,7 @@ This guide will help you get the project up and running locally so you can start
 Before you begin, ensure you have the following installed on your machine:
 - [Node.js](https://nodejs.org/en/) (Version 18.17.0 or higher recommended)
 - `npm` (comes bundled with Node.js)
-- An active [OpenAI API Key](https://platform.openai.com/api-keys)
+- An active [OpenRouter API Key](https://openrouter.ai/keys)
 
 ## Installation
 
@@ -21,9 +21,9 @@ Before you begin, ensure you have the following installed on your machine:
     ```
 
 3.  **Configure Environment Variables:**
-    Create a new file named `.env.local` in the root directory of the project. Add your OpenAI API key to this file like so:
+    Create a new file named `.env.local` in the root directory of the project. Add your OpenRouter API key to this file like so:
     ```env
-    OPENAI_API_KEY=your_actual_api_key_here
+    OPENROUTER_API_KEY=your_actual_api_key_here
     ```
 
 ## Running the Application
@@ -38,9 +38,10 @@ Open your web browser and navigate to [http://localhost:3000](http://localhost:3
 
 ## How to Use the App
 
-1.  **Select a Character:** On the left side of the screen (or by opening the hamburger menu on mobile), you will see a list of available personas (e.g., Elara Sunweaver, Jax Vance). Click on a character to start a conversation with them.
-2.  **Chat:** Use the text input box at the bottom of the main chat window to send messages. Press `Enter` to send, or `Shift + Enter` to add a new line.
-3.  **Switch Characters:** You can switch characters at any time by selecting a different one from the sidebar. Note: Switching characters will reset your current chat history.
+1.  **Configure Model (Optional):** In the sidebar, you can specify an OpenRouter model ID in the text input box. It defaults to `meta-llama/llama-3.3-70b-instruct`.
+2.  **Select a Character:** On the left side of the screen (or by opening the hamburger menu on mobile), you will see a list of available personas (e.g., Elara Sunweaver, Jax Vance). Click on a character to start a conversation with them.
+3.  **Chat:** Use the text input box at the bottom of the main chat window to send messages. Press `Enter` to send, or `Shift + Enter` to add a new line.
+4.  **Switch Characters or Models:** You can switch characters or the model at any time from the sidebar. Note: Changing the character or model will reset your current chat history.
 
 ## Further Documentation
 
