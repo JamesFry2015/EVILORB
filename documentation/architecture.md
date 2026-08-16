@@ -1,0 +1,31 @@
+# Architecture Overview
+
+PersonaAI is a modern web application built using the Next.js App Router. It leverages the Vercel AI SDK to seamlessly handle interactions with large language models.
+
+## Tech Stack
+
+*   **Framework:** [Next.js](https://nextjs.org/) (App Router)
+*   **Language:** [TypeScript](https://www.typescriptlang.org/)
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+*   **AI Integration:** [Vercel AI SDK](https://sdk.vercel.ai/docs) (`ai`, `@ai-sdk/openai`)
+*   **Icons:** [Lucide React](https://lucide.dev/)
+
+## High-Level Data Flow
+
+1.  **User Input:** The user types a message in the `Chat` UI component and submits the form.
+2.  **Client-Side Hook:** The `useChat` hook from the Vercel AI SDK captures the input, updates the local message state (optimistic UI update), and sends a POST request to the backend API route.
+    *   *Note:* The application passes the active `characterId` within the request body so the backend knows which persona to assume.
+3.  **Backend API Route (`/api/chat/route.ts`):**
+    *   Receives the conversation history (`messages`) and the `characterId`.
+    *   Looks up the corresponding character in the `characters.ts` definition file to retrieve their specific `systemPrompt`.
+    *   Calls the OpenAI API (via `@ai-sdk/openai`) using `streamText`, injecting the selected system prompt to enforce the persona.
+4.  **Streaming Response:** The AI's response is streamed back to the client chunk by chunk using `toAIStreamResponse()`.
+5.  **UI Update:** The `useChat` hook receives the stream, continuously updates the UI, and creates the typing effect for the message bubble.
+
+## Project Structure
+
+*   **`src/app/page.tsx`:** The root page component. It acts as the container, holding the layout state (e.g., whether the mobile sidebar is open) and rendering both the `Sidebar` and `Chat` components.
+*   **`src/app/api/chat/route.ts`:** The backend endpoint responsible for securely communicating with the OpenAI API.
+*   **`src/components/Sidebar.tsx`:** The navigation component that lists available characters and allows the user to switch context.
+*   **`src/components/Chat.tsx`:** The main interactive chat window. It manages the input field, the message history display, and auto-scrolling. It completely remounts (using React `key`) when a new character is selected to ensure a fresh session.
+*   **`src/lib/characters.ts`:** The central data store defining all available AI personas, their configurations, and their specific system prompts.
