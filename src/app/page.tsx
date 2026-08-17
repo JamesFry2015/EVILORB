@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { Chat } from '@/components/Chat';
 import { ScenarioEditor } from '@/components/ScenarioEditor';
+import { SettingsModal } from '@/components/SettingsModal';
 import { scenarios as defaultScenarios, Scenario } from '@/lib/scenarios';
 
 export default function Home() {
@@ -12,6 +13,16 @@ export default function Home() {
   const [isEditing, setIsEditing] = useState(false);
   const [modelName, setModelName] = useState('meta-llama/llama-3.3-70b-instruct');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+
+  // Load API key from local storage on mount
+  useEffect(() => {
+    const storedKey = localStorage.getItem('openrouter_api_key');
+    if (storedKey) {
+      setApiKey(storedKey);
+    }
+  }, []);
 
   const handleSaveScenario = (savedScenario: Scenario) => {
     setAllScenarios(prev => {
@@ -28,6 +39,18 @@ export default function Home() {
     setSelectedScenario(savedScenario);
     setIsEditing(false);
     setIsSidebarOpen(false);
+  };
+
+  const handleDeleteScenario = (id: string) => {
+    setAllScenarios(prev => {
+      const newArr = prev.filter(s => s.id !== id);
+      // If we deleted the active scenario, select another one or null
+      if (selectedScenario?.id === id) {
+        setSelectedScenario(newArr.length > 0 ? newArr[0] : null);
+      }
+      return newArr;
+    });
+    setIsEditing(false);
   };
 
   return (
@@ -48,12 +71,21 @@ export default function Home() {
         setIsOpen={setIsSidebarOpen}
         modelName={modelName}
         setModelName={setModelName}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
       />
 
       {isEditing ? (
         <ScenarioEditor
           initialScenario={selectedScenario || undefined}
           onSave={handleSaveScenario}
+          onDelete={handleDeleteScenario}
           onCancel={() => {
             setIsEditing(false);
             if (!selectedScenario && allScenarios.length > 0) {
@@ -68,8 +100,10 @@ export default function Home() {
           key={`${selectedScenario.id}-${selectedScenario.title}-${modelName}`}
           scenario={selectedScenario}
           modelName={modelName}
+          apiKey={apiKey}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onEditScenario={() => setIsEditing(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center text-gray-500">

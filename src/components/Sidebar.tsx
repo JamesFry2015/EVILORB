@@ -1,7 +1,7 @@
 import { Scenario } from '@/lib/scenarios';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Plus } from 'lucide-react';
+import { Plus, Settings } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -16,9 +16,10 @@ interface SidebarProps {
   setIsOpen: (isOpen: boolean) => void;
   modelName: string;
   setModelName: (modelName: string) => void;
+  onOpenSettings: () => void;
 }
 
-export function Sidebar({ scenarios, selectedScenario, onSelectScenario, onCreateNew, isOpen, setIsOpen, modelName, setModelName }: SidebarProps) {
+export function Sidebar({ scenarios, selectedScenario, onSelectScenario, onCreateNew, isOpen, setIsOpen, modelName, setModelName, onOpenSettings }: SidebarProps) {
   return (
     <>
       {/* Mobile overlay */}
@@ -34,11 +35,20 @@ export function Sidebar({ scenarios, selectedScenario, onSelectScenario, onCreat
         "fixed inset-y-0 left-0 z-30 w-72 bg-gray-900 border-r border-gray-800 text-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            🌍 WorldBuilder
-          </h2>
-          <p className="text-sm text-gray-400 mt-1">Choose your scenario</p>
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              🌍 WorldBuilder
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">Choose your scenario</p>
+          </div>
+          <button
+            onClick={onOpenSettings}
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            title="Global Settings"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
         </div>
 
         <div className="p-4 border-b border-gray-800">

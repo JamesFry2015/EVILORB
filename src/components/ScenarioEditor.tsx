@@ -7,9 +7,10 @@ interface ScenarioEditorProps {
   initialScenario?: Scenario;
   onSave: (scenario: Scenario) => void;
   onCancel: () => void;
+  onDelete?: (id: string) => void;
 }
 
-export function ScenarioEditor({ initialScenario, onSave, onCancel }: ScenarioEditorProps) {
+export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: ScenarioEditorProps) {
   const isEditing = !!initialScenario;
   const [activeTab, setActiveTab] = useState<'metadata' | 'lore' | 'rules' | 'start' | 'model'>('metadata');
 
@@ -333,7 +334,21 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel }: ScenarioEd
       </div>
 
       {/* Footer / Actions */}
-      <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-end shrink-0">
+      <div className={cn("p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex shrink-0", isEditing && onDelete ? "justify-between" : "justify-end")}>
+        {isEditing && onDelete && (
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Are you sure you want to delete this scenario? This cannot be undone.')) {
+                onDelete(initialScenario!.id);
+              }
+            }}
+            className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 focus:outline-none transition-colors flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </button>
+        )}
         <button
           form="scenario-form"
           type="submit"

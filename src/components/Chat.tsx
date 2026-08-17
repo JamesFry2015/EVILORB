@@ -9,11 +9,13 @@ import { cn } from './Sidebar';
 interface ChatProps {
   scenario: Scenario;
   modelName: string;
+  apiKey: string;
   onOpenSidebar: () => void;
   onEditScenario: () => void;
+  onOpenSettings: () => void;
 }
 
-export function Chat({ scenario, modelName, onOpenSidebar, onEditScenario }: ChatProps) {
+export function Chat({ scenario, modelName, apiKey, onOpenSidebar, onEditScenario, onOpenSettings }: ChatProps) {
   // We include scenarioId, scenario payload, and modelName in the initial request.
 
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } = useChat({
@@ -22,6 +24,9 @@ export function Chat({ scenario, modelName, onOpenSidebar, onEditScenario }: Cha
       // We pass the full scenario config to the backend so dynamic edits don't require server-side state persistence
       scenarioConfig: scenario,
       modelName: modelName,
+    },
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
     },
     // Customize the API endpoint if needed, default is /api/chat
     api: '/api/chat',
@@ -145,10 +150,23 @@ export function Chat({ scenario, modelName, onOpenSidebar, onEditScenario }: Cha
 
       {/* Input area */}
       <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-        <form
-          onSubmit={onSubmit}
-          className="max-w-4xl mx-auto relative flex items-end gap-2"
-        >
+        {!apiKey ? (
+          <div className="max-w-4xl mx-auto flex items-center justify-between bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-xl px-4 py-3">
+            <span className="text-sm text-yellow-800 dark:text-yellow-200">
+              Please configure your OpenRouter API Key to start playing.
+            </span>
+            <button
+              onClick={onOpenSettings}
+              className="px-3 py-1.5 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-900 dark:text-yellow-100 text-sm font-medium rounded-md transition-colors"
+            >
+              Open Settings
+            </button>
+          </div>
+        ) : (
+          <form
+            onSubmit={onSubmit}
+            className="max-w-4xl mx-auto relative flex items-end gap-2"
+          >
           <div className="relative flex-1">
             <textarea
               value={input}
@@ -176,6 +194,7 @@ export function Chat({ scenario, modelName, onOpenSidebar, onEditScenario }: Cha
             <Send className="w-5 h-5" />
           </button>
         </form>
+        )}
         <div className="text-center mt-2 text-xs text-gray-400 dark:text-gray-500">
           Press Enter to take action, Shift + Enter for new line. The GM decides the outcome.
         </div>

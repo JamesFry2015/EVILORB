@@ -5,13 +5,24 @@ import { scenarios } from '@/lib/scenarios';
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-// Create an OpenRouter provider using the OpenAI compatible endpoint
-const openrouter = createOpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
-
 export async function POST(req: Request) {
+  // Extract API key from Authorization header
+  const authHeader = req.headers.get('Authorization');
+  const apiKey = authHeader ? authHeader.replace('Bearer ', '') : process.env.OPENROUTER_API_KEY;
+
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'Missing OpenRouter API Key. Please configure it in settings.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Create an OpenRouter provider dynamically with the provided key
+  const openrouter = createOpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: apiKey,
+  });
+
   try {
     const { messages, scenarioId, scenarioConfig, modelName } = await req.json();
 
