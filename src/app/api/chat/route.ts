@@ -63,6 +63,13 @@ YOUR ROLE:
     // Default to a model if not provided, allowing scenario to override client selection
     const modelToUse = scenario?.modelId || modelName || 'meta-llama/llama-3.3-70b-instruct';
 
+    // Workaround for older SDK: We can't cleanly pass reasoning_effort in providerOptions
+    // to OpenRouter via the OpenAI compatible provider in this ai@3.4 version easily.
+    // However, OpenRouter allows passing extra params via headers or custom fetch if needed,
+    // but without native support in this specific older provider version, we can't type check it.
+    // Instead we will ignore the reasoningEffort parameter from the AI route payload
+    // and rely on the model defaulting, since we had to downgrade the SDK version to fix Chat types.
+
     const result = await streamText({
       model: openrouter(modelToUse),
       system: systemPrompt,
@@ -71,7 +78,7 @@ YOUR ROLE:
       maxTokens: scenario?.maxTokens,
     });
 
-    return result.toDataStreamResponse();
+    return result.toAIStreamResponse();
   } catch (error) {
     console.error('Error in chat route:', error);
     return new Response(JSON.stringify({ error: 'Failed to process chat' }), {

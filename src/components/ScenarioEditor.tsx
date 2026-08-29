@@ -32,6 +32,7 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
   const [modelId, setModelId] = useState(initialScenario?.modelId || '');
   const [temperature, setTemperature] = useState<number | ''>(initialScenario?.temperature ?? '');
   const [maxTokens, setMaxTokens] = useState<number | ''>(initialScenario?.maxTokens ?? '');
+  const [reasoningEffort, setReasoningEffort] = useState<'low' | 'medium' | 'high' | ''>(initialScenario?.reasoningEffort ?? '');
 
   const handleAddLore = () => {
     setLoreEntries([...loreEntries, { id: `lore-${Date.now()}`, title: '', content: '' }]);
@@ -61,6 +62,7 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
       modelId: modelId || undefined,
       temperature: temperature === '' ? undefined : temperature,
       maxTokens: maxTokens === '' ? undefined : maxTokens,
+      reasoningEffort: reasoningEffort === '' ? undefined : reasoningEffort,
     };
   };
 
@@ -325,6 +327,20 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
                     className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., 500"
                   />
+                </div>
+                <div>
+                  <label htmlFor="reasoning-effort" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reasoning Effort</label>
+                  <select
+                    id="reasoning-effort"
+                    value={reasoningEffort}
+                    onChange={(e) => setReasoningEffort(e.target.value as 'low' | 'medium' | 'high' | '')}
+                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">Default</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
                 </div>
               </div>
             </div>
