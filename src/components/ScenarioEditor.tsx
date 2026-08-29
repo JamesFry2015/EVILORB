@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Scenario, LoreEntry } from '@/lib/scenarios';
 import { Save, Copy, X, Plus, Trash2 } from 'lucide-react';
 import { cn } from './Sidebar';
+import { ModelAutocomplete } from './ModelAutocomplete';
 
 interface ScenarioEditorProps {
   initialScenario?: Scenario;
@@ -292,12 +293,11 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
                <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Specific Model ID (Optional)</label>
                 <p className="text-xs text-gray-500 mb-2">Overrides the user's selected model for this specific scenario.</p>
-                <input
-                  type="text"
+                <ModelAutocomplete
                   value={modelId}
-                  onChange={(e) => setModelId(e.target.value)}
-                  className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  onChange={setModelId}
                   placeholder="e.g., anthropic/claude-3-opus"
+                  className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
