@@ -28,7 +28,7 @@ export interface Scenario {
   modelId?: string;
   temperature?: number;
   maxTokens?: number;
-  reasoningEffort?: 'low' | 'medium' | 'high';
+  reasoningEffort?: string;
 }
 
 export const scenarios: Scenario[] = [

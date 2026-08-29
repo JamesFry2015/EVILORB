@@ -17,17 +17,36 @@ export async function POST(req: Request) {
     });
   }
 
-  // Create an OpenRouter provider dynamically with the provided key
-  const openrouter = createOpenAI({
-    baseURL: 'https://openrouter.ai/api/v1',
-    apiKey: apiKey,
-  });
-
   try {
     const { messages, scenarioId, scenarioConfig, modelName } = await req.json();
 
     // Find the selected scenario, prefer the client-provided config if it exists (for edits)
     const scenario = scenarioConfig || scenarios.find((s) => s.id === scenarioId);
+
+    // Workaround: We are forced to use `@ai-sdk/openai@0.0.72` to preserve compatibility with `ai/react` UI types.
+    // This older version doesn't support providerOptions natively for reasoning effort.
+    // However, OpenRouter accepts the `reasoning_effort` parameter as a top-level field in the standard
+    // OpenAI completions request body. Since `@ai-sdk/openai` allows passing additional parameters
+    // through its provider configuration or via monkey-patching, we will pass it using `fetch` override.
+
+    const fetchWithReasoning = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      if (init?.body && scenario?.reasoningEffort && scenario.reasoningEffort !== 'none') {
+        try {
+          const body = JSON.parse(init.body as string);
+          body.reasoning_effort = scenario.reasoningEffort;
+          init.body = JSON.stringify(body);
+        } catch (e) {
+          console.error("Failed to parse body to inject reasoning effort", e);
+        }
+      }
+      return fetch(input, init);
+    };
+
+    const openrouter = createOpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: apiKey,
+      fetch: fetchWithReasoning as any, // Type override to satisfy `@ai-sdk/openai` fetch requirements
+    });
 
     let systemPrompt = "You are a helpful AI assistant.";
 

@@ -32,7 +32,7 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
   const [modelId, setModelId] = useState(initialScenario?.modelId || '');
   const [temperature, setTemperature] = useState<number | ''>(initialScenario?.temperature ?? '');
   const [maxTokens, setMaxTokens] = useState<number | ''>(initialScenario?.maxTokens ?? '');
-  const [reasoningEffort, setReasoningEffort] = useState<'low' | 'medium' | 'high' | ''>(initialScenario?.reasoningEffort ?? '');
+  const [reasoningEffort, setReasoningEffort] = useState<string>(initialScenario?.reasoningEffort ?? '');
 
   const handleAddLore = () => {
     setLoreEntries([...loreEntries, { id: `lore-${Date.now()}`, title: '', content: '' }]);
@@ -333,13 +333,17 @@ export function ScenarioEditor({ initialScenario, onSave, onCancel, onDelete }: 
                   <select
                     id="reasoning-effort"
                     value={reasoningEffort}
-                    onChange={(e) => setReasoningEffort(e.target.value as 'low' | 'medium' | 'high' | '')}
+                    onChange={(e) => setReasoningEffort(e.target.value as any)}
                     className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100"
                   >
                     <option value="">Default</option>
+                    <option value="none">None</option>
+                    <option value="minimal">Minimal / Low</option>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
+                    <option value="xhigh">XHigh / Max</option>
+                    <option value="max">Max</option>
                   </select>
                 </div>
               </div>
